@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hello_world/Anime.dart';
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 
 class Ani1Scraper {
   Future<List<Ani1Anime>> fetchAnimes() async {
-    final response = await http.get('https://anime1.me/');
+    final response = await http.get(Uri.parse('https://anime1.me/'));
 
     if (response.statusCode == 200) {
       final animesJson = getAni1HTMLToJSONList(response.body);
@@ -71,36 +72,59 @@ class Ani1Scraper {
   }
 
   Future<List<Ani1Episode>> fetchAnime(String cat) async {
-    final response = await http.get('https://anime1.me$cat');
+    final response = await http.get(Uri.parse('https://anime1.me$cat'), );
 
     if (response.statusCode == 200) {
-      return getAni1Episodes(response.body);
+      return await fetchAni1Episodes(parse(response.body));
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to fetch episode');
     }
   }
 
-  List<Ani1Episode> getAni1Episodes(String body) {
-    final List<Ani1Episode> episodes = List();
-    final document = parse(body);
-    
-    for (var x in document.getElementsByClassName('loadvideo')){
-      String link = x.attributes['data-src'];
-      Ani1Episode ae = new Ani1Episode.link(link);
+  Future<List<Ani1Episode>> fetchAni1Episodes(Document document) async{
+    final List<Ani1Episode> episodes = [];
+    final List<String> videoLinks = [];
+    final List<String> temps = [];
+
+    for (var a in document.getElementsByTagName('article')) {
+      String videoLink = a.getElementsByTagName('iframe')[0].attributes['src'];
+      videoLinks.add(videoLink);
+    }
+
+    for (var link in videoLinks){
+      final response = await http.get(Uri.parse(link));
+
+      String episodeLink = parse(response.body).getElementsByTagName('script').last.outerHtml;
+
+      String temp = episodeLink.split('.send(\'')[1].split('\');')[0];
+      temp = temp.split('=')[1];
+      temp = Uri.decodeFull(temp);
+
+      temps.add(temp);
+    }
+
+    for (var t in temps){
+      Uri uri = Uri.parse('https://v.anime1.me/api');
+      final response = await http.post(uri, body: {'d': t});
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+
+      Ani1Episode ae = new Ani1Episode.link('https://' + json['l'].replaceAll('//', ''));
+      // ae.name = a.getElementsByTagName('a')[1].innerHtml;
 
       episodes.add(ae);
     }
+
+
 
     return episodes;
   }
 
   Future<String> fetchAni1EpisodesSrc(String link) async {
-    final response = await http.get(link);
+    final response = await http.get(Uri.parse(link));
     final document = parse(response.body);
 
     return document.getElementsByTagName('source')[0].attributes['src'];
   }
-
-
 }

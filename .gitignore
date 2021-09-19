@@ -83,3 +83,23 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# dart
+.dart_tool/
+.packages
+build/
+pubspec.lock  # Except for application packages
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Mac
+.DS_Store
+
+# flutter
+.flutter-*
+
+.packages*

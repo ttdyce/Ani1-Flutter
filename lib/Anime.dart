@@ -33,9 +33,10 @@ class Ani1Anime {
 }
 
 class Ani1Episode {
-  String link, src;
+  String link, src, name;
 
   Ani1Episode(this.link, this.src);
   Ani1Episode.link(this.link);
+  Ani1Episode.name(this.name);
 
 }
