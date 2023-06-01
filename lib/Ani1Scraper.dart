@@ -11,7 +11,7 @@ class Ani1Scraper {
 
     if (response.statusCode == 200) {
       final animesJson = getAni1HTMLToJSONList(response.body);
-      final List<Ani1Anime> animes = List();
+      final List<Ani1Anime> animes = [];
 
       for (var aJson in animesJson) {
         animes.add(Ani1Anime.fromJson(aJson));
@@ -26,12 +26,12 @@ class Ani1Scraper {
 
   List getAni1HTMLToJSONList(String body) {
     final document = parse(body);
-    final names = List(),
-        episodes = List(),
-        years = List(),
-        seasons = List(),
-        fansubs = List(),
-        catList = List();
+    final names = [],
+        episodes = [],
+        years = [],
+        seasons = [],
+        fansubs = [],
+        catList = [];
     final allList = [names, episodes, years, seasons, fansubs];
 
     for (int i = 1; i <= 5; i++) {
@@ -54,7 +54,7 @@ class Ani1Scraper {
 //    debugPrint(years.toString());
 //    debugPrint(seasons.toString());
 
-    final animeJsonList = List();
+    final animeJsonList = [];
 
     for (int i = 0; i < names.length; i++) {
       Map<String, dynamic> map = Map();
@@ -72,7 +72,7 @@ class Ani1Scraper {
   }
 
   Future<List<Ani1Episode>> fetchAnime(String cat) async {
-    final response = await http.get(Uri.parse('https://anime1.me$cat'), );
+    final response = await http.get(Uri.parse('https://anime1.me?cat=$cat'), );
 
     if (response.statusCode == 200) {
       return await fetchAni1Episodes(parse(response.body));
@@ -88,8 +88,8 @@ class Ani1Scraper {
     final List<String> temps = [];
 
     for (var a in document.getElementsByTagName('article')) {
-      String videoLink = a.getElementsByTagName('iframe')[0].attributes['src'];
-      videoLinks.add(videoLink);
+      String? videoLink = a.getElementsByTagName('iframe')[0].attributes['src'];
+      videoLinks.add(videoLink!);
     }
 
     for (var link in videoLinks){
@@ -121,7 +121,7 @@ class Ani1Scraper {
     return episodes;
   }
 
-  Future<String> fetchAni1EpisodesSrc(String link) async {
+  Future<String?> fetchAni1EpisodesSrc(String link) async {
     final response = await http.get(Uri.parse(link));
     final document = parse(response.body);
 

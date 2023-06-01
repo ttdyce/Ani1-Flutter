@@ -9,15 +9,15 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<List<Ani1Anime>> futureAnimes;
-  FutureBuilder futureBuilder;
+  late Future<List<Ani1Anime>> futureAnimes;
+  late FutureBuilder futureBuilder;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           //retrieve animes from scraper
-          final List<Ani1Anime> animes = snapshot.data;
+          final List<Ani1Anime> animes = snapshot.data!;
           return GridView.builder(
               itemCount: animes.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> {
 class SecondRoute extends StatelessWidget {
   final Ani1Anime anime;
 
-  SecondRoute({Key key, @required this.anime}) : super(key: key);
+  SecondRoute({Key? key, required this.anime}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +115,7 @@ class SecondRoute extends StatelessWidget {
                 future: futureAnime,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
-                  final List<Ani1Episode> episodes = snapshot.data;
+                  final List<Ani1Episode> episodes = snapshot.data!;
                   String src = episodes[0].link;
 
                   return Column(
@@ -133,7 +133,7 @@ class SecondRoute extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
 
-                  final List<Ani1Episode> episodes = snapshot.data;
+                  final List<Ani1Episode> episodes = snapshot.data!;
 
                   return Expanded(
                       child: ListView.builder(
@@ -155,7 +155,7 @@ class SecondRoute extends StatelessWidget {
 class VideoPlayerScreen extends StatefulWidget {
   final String link;
 
-  VideoPlayerScreen({Key key, this.link}) : super(key: key);
+  VideoPlayerScreen({Key? key, required this.link}) : super(key: key);
 
   @override
   _VideoPlayerScreenState createState() => _VideoPlayerScreenState(link);
@@ -163,14 +163,12 @@ class VideoPlayerScreen extends StatefulWidget {
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   String link;
-  VideoPlayerController _controller;
-  ChewieController chewieController;
+  VideoPlayerController? _controller;
+  ChewieController? chewieController;
 
-  Future<void> _initializeVideoPlayerFuture;
+  Future<void>? _initializeVideoPlayerFuture;
 
-  _VideoPlayerScreenState(String link) {
-    this.link = link;
-  }
+  _VideoPlayerScreenState(this.link);
 
   @override
   void initState() {
@@ -182,7 +180,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     );
 
     // Initialize the controller and store the Future for later use.
-    _initializeVideoPlayerFuture = _controller.initialize();
+    _initializeVideoPlayerFuture = _controller!.initialize();
 
     super.initState();
   }
@@ -194,7 +192,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           chewieController = ChewieController(
-            videoPlayerController: _controller,
+            videoPlayerController: _controller!,
             autoPlay: true,
             showControls: true,
           );
@@ -202,7 +200,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           return Container(
               height: 300, // todo remove hardcode height
               child: Chewie(
-                controller: chewieController,
+                controller: chewieController!,
               ));
 //          return AspectRatio(
 //            aspectRatio: _controller.value.aspectRatio,
@@ -230,8 +228,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void dispose() {
     // Ensure disposing of the VideoPlayerController to free up resources.
-    _controller.dispose();
-    chewieController.dispose();
+    _controller!.dispose();
+    chewieController!.dispose();
 
     super.dispose();
   }

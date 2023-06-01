@@ -8,7 +8,7 @@ import 'package:video_player/video_player.dart';
 class VideoPlayerApp extends StatelessWidget {
   final String link;
 
-  VideoPlayerApp({Key key, @required this.link}) : super(key: key);
+  VideoPlayerApp({Key? key, required this.link}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class VideoPlayerApp extends StatelessWidget {
 class VideoPlayerScreen extends StatefulWidget {
   final String link;
 
-  VideoPlayerScreen({Key key, this.link}) : super(key: key);
+  VideoPlayerScreen({Key? key, required this.link}) : super(key: key);
 
   @override
   _VideoPlayerScreenState createState() => _VideoPlayerScreenState(link);
@@ -31,12 +31,10 @@ class VideoPlayerScreen extends StatefulWidget {
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   String link;
-  VideoPlayerController _controller;
-  Future<void> _initializeVideoPlayerFuture;
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
-  _VideoPlayerScreenState(String link){
-    this.link = link;
-  }
+  _VideoPlayerScreenState(this.link);
 
   @override
   void initState() {

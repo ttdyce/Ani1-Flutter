@@ -18,7 +18,14 @@ class Ani1Anime {
   final String season;
   final String fansub;
 
-  Ani1Anime({this.name,this.cat, this.episode, this.year, this.season, this.fansub});
+  Ani1Anime({
+    required this.name,
+    required this.cat,
+    required this.episode,
+    required this.year,
+    required this.season,
+    required this.fansub,
+  });
 
   factory Ani1Anime.fromJson(Map<String, dynamic> json) {
     return Ani1Anime(
@@ -33,10 +40,9 @@ class Ani1Anime {
 }
 
 class Ani1Episode {
-  String link, src, name;
+  String link = '', src = '', name = '';
 
   Ani1Episode(this.link, this.src);
   Ani1Episode.link(this.link);
   Ani1Episode.name(this.name);
-
 }
